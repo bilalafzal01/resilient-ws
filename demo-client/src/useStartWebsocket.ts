@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { ResilientWS } from 'resilient-ws'
 
-export const COPILOT_WS_BACKEND_ENDPOINT = `wss://ws-be.copilot.dnnsoftware.com`
+export const COPILOT_WS_BACKEND_ENDPOINT = `127.0.0.1:8080`
 
 export const useStartWebsocket = () => {
   const [connectionState, setConnectionState] = useState(`initial`)
@@ -19,7 +19,7 @@ export const useStartWebsocket = () => {
     }
 
     ResilientWS.create({
-      url: `${COPILOT_WS_BACKEND_ENDPOINT}?token=bG9jYWxob3N0LmNvbTphNDJmYmUwNjlhZjNjY2FkOGVkYzczM2M0NjJhZWZhOTBmYjJjMjJj`,
+      url: `${COPILOT_WS_BACKEND_ENDPOINT}?token=xyz`,
       onConnectCallback: onConnect,
       onDisconnectCallback: onDisconnect,
       onMessageCallback: (message) => {

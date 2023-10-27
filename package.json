@@ -1,6 +1,7 @@
 {
   "name": "resilient-ws",
-  "version": "0.0.6",
+  "description": "A resilient websocket client for Node.js and the browser. Provides automatic reconnection, message retries, ping/pong & message queueing.",
+  "version": "0.0.8",
   "type": "module",
   "files": [
     "dist"
@@ -31,5 +32,23 @@
   },
   "dependencies": {
     "reconnecting-websocket": "^4.4.0"
-  }
+  },
+  "keywords": [
+    "websocket",
+    "client",
+    "reconnecting",
+    "reconnection",
+    "reconnect",
+    "forever",
+    "persistent",
+    "forever",
+    "automatic"
+  ],
+  "license": "MIT",
+  "author": "Bilal Afzal <bilalafzal1911@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bilalafzal01/resilient-ws.git"
+  },
+  "homepage": "https://github.com/bilalafzal01/resilient-ws/tree/main#readme"
 }
