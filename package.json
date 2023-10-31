@@ -1,7 +1,7 @@
 {
   "name": "resilient-ws",
   "description": "A resilient websocket client for Node.js and the browser. Provides automatic reconnection, message retries, ping/pong & message queueing.",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "type": "module",
   "files": [
     "dist"
