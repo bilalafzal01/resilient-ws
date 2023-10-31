@@ -78,3 +78,20 @@ ResilientWS.create({
   },
 })
 ```
+
+### Configure the Reconnecting Websocket
+
+You can configure the reconnecting websocket by passing the config for reconnecting websocket when creating your ResilientWS instance.
+
+You can find the complete list of options [here](https://www.npmjs.com/package/reconnecting-websocket#available-options).
+
+```js
+import { ResilientWS } from 'resilient-ws'
+
+ResilientWS.create({
+  ...config,
+  reconnectingWSOptions: {
+    maxRetries: 5,
+  },
+})
+```

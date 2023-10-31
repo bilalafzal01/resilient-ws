@@ -1,4 +1,7 @@
-import ReconnectingWebSocket, { ErrorEvent } from 'reconnecting-websocket'
+import ReconnectingWebSocket, {
+  ErrorEvent,
+  Options,
+} from 'reconnecting-websocket'
 
 type ResilientWSPingPongSettings = {
   enabled: boolean
@@ -13,6 +16,7 @@ type ResilientWSConstructorProps = {
   onMessageCallback: (event: MessageEvent) => void
   onErrorCallback: (event: ErrorEvent) => void
   pingPongSettings?: ResilientWSPingPongSettings
+  reconnectingWSOptions?: Options
 }
 
 export type ResilientWSSendMessageProps = {
@@ -31,6 +35,7 @@ export default class ResilientWS {
   private onErrorCallback: (event: ErrorEvent) => void
   private pingPongSettings: ResilientWSPingPongSettings | undefined
   private pingPongInterval: NodeJS.Timeout | undefined
+  private reconnectingWSOptions: Options | undefined
 
   private constructor(props: ResilientWSConstructorProps) {
     this.url = props.url
@@ -40,12 +45,18 @@ export default class ResilientWS {
     this.onErrorCallback = props.onErrorCallback
     this.pingPongSettings = props.pingPongSettings
     this.pingPongInterval = undefined
+    this.reconnectingWSOptions = props.reconnectingWSOptions
 
     this.initializeSocket()
   }
 
   private initializeSocket() {
-    this.socket = new ReconnectingWebSocket(this.url)
+    this.socket = new ReconnectingWebSocket(
+      this.url,
+      [],
+      this.reconnectingWSOptions
+    )
+
     this.socket.addEventListener('open', () => this.onConnect())
     this.socket.addEventListener('close', () => this.onDisconnect())
     this.socket.addEventListener('message', (event) =>
