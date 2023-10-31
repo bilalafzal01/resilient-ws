@@ -112,6 +112,9 @@ export default class ResilientWS {
       const pingIntervalNum = this.pingPongSettings?.pingInterval || 30000
       const pingMessage = this.pingPongSettings?.pingMessage || 'ping'
       this.pingPongInterval = setInterval(() => {
+        console.log(
+          'npm package - resilient-ws: Sending ping message on websocket'
+        )
         this.send({
           message: pingMessage,
           attempt: 0,
@@ -129,9 +132,9 @@ export default class ResilientWS {
     try {
       if (this.socket && this.socket.readyState === WebSocket.OPEN) {
         this.socket.send(props.message)
-        // console.log(
-        //   'npm package - resilient-ws: Successfully sent the message on websocket'
-        // )
+        console.log(
+          'npm package - resilient-ws: Successfully sent the message on websocket'
+        )
         return true
       } else if (props.attempt < maxAttempts) {
         if (props.forceReconnect) {

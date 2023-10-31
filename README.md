@@ -68,8 +68,8 @@ import { ResilientWS } from 'resilient-ws'
 
 ResilientWS.create({
   ...config,
-  pingPongConfig: {
-  enabled: true
+  pingPongSettings: {
+    enabled: true
     pingInterval: 10000,
     pingMessage: 'ping',
   },
