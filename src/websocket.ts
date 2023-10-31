@@ -119,9 +119,8 @@ export default class ResilientWS {
           message: pingMessage,
           attempt: 0,
           forceReconnect: false,
-        }),
-          pingIntervalNum
-      })
+        })
+      }, pingIntervalNum)
     }
   }
 
