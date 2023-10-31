@@ -107,19 +107,21 @@ export default class ResilientWS {
   }
 
   //   * SECTION - Ping Pong
-  private async pingPong() {
+  private pingPong() {
     if (this.pingPongSettings && this.pingPongSettings?.enabled) {
       const pingIntervalNum = this.pingPongSettings?.pingInterval || 30000
       const pingMessage = this.pingPongSettings?.pingMessage || 'ping'
-      this.pingPongInterval = setInterval(() => {
+      this.pingPongInterval = setInterval(async () => {
         console.log(
           'npm package - resilient-ws: Sending ping message on websocket'
         )
-        this.send({
-          message: pingMessage,
-          attempt: 0,
-          forceReconnect: false,
-        })
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+          await this.send({
+            message: pingMessage,
+            attempt: 0,
+            forceReconnect: false,
+          })
+        }
       }, pingIntervalNum)
     }
   }
