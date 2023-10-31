@@ -2,9 +2,6 @@
 
 # Resilient Websockets
 
-Based on [reconnecting-websocket](https://raw.githubusercontent.com/pladaria/reconnecting-websocket); provides:
-
-- reconnection when the connection is lost
 - automatic retries when the message cannot be sent (e.g. when the connection is lost)
 - ping/pong to keep the connection alive
 
