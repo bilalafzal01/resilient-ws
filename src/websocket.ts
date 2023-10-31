@@ -1,8 +1,3 @@
-import ReconnectingWebSocket, {
-  ErrorEvent,
-  Options,
-} from 'reconnecting-websocket'
-
 type ResilientWSPingPongSettings = {
   enabled: boolean
   pingInterval?: number
@@ -14,9 +9,8 @@ type ResilientWSConstructorProps = {
   onConnectCallback: () => void
   onDisconnectCallback: () => void
   onMessageCallback: (event: MessageEvent) => void
-  onErrorCallback: (event: ErrorEvent) => void
+  onErrorCallback: (event: Event) => void
   pingPongSettings?: ResilientWSPingPongSettings
-  reconnectingWSOptions?: Options
 }
 
 export type ResilientWSSendMessageProps = {
@@ -27,15 +21,14 @@ export type ResilientWSSendMessageProps = {
 
 export default class ResilientWS {
   private static instance: ResilientWS
-  private socket: ReconnectingWebSocket | null = null
+  private socket: WebSocket | null = null
   private url: string
   private onConnectCallback: () => void
   private onDisconnectCallback: () => void
   private onMessageCallback: (event: MessageEvent) => void
-  private onErrorCallback: (event: ErrorEvent) => void
+  private onErrorCallback: (event: Event) => void
   private pingPongSettings: ResilientWSPingPongSettings | undefined
   private pingPongInterval: NodeJS.Timeout | undefined
-  private reconnectingWSOptions: Options | undefined
 
   private constructor(props: ResilientWSConstructorProps) {
     this.url = props.url
@@ -45,17 +38,12 @@ export default class ResilientWS {
     this.onErrorCallback = props.onErrorCallback
     this.pingPongSettings = props.pingPongSettings
     this.pingPongInterval = undefined
-    this.reconnectingWSOptions = props.reconnectingWSOptions
 
     this.initializeSocket()
   }
 
   private initializeSocket() {
-    this.socket = new ReconnectingWebSocket(
-      this.url,
-      [],
-      this.reconnectingWSOptions
-    )
+    this.socket = new WebSocket(this.url)
 
     this.socket.addEventListener('open', () => this.onConnect())
     this.socket.addEventListener('close', () => this.onDisconnect())
@@ -105,13 +93,13 @@ export default class ResilientWS {
   }
 
   private handleWSMessage(event: MessageEvent) {
-    console.log('npm package - resilient-ws: Received message on websocket')
+    // console.log('npm package - resilient-ws: Received message on websocket')
     if (this.onMessageCallback) {
       this.onMessageCallback(event)
     }
   }
 
-  private onError(event: ErrorEvent) {
+  private onError(event: Event) {
     console.error('npm package - resilient-ws: WebSocket error', event)
     if (this.onErrorCallback) {
       this.onErrorCallback(event)
@@ -141,9 +129,9 @@ export default class ResilientWS {
     try {
       if (this.socket && this.socket.readyState === WebSocket.OPEN) {
         this.socket.send(props.message)
-        console.log(
-          'npm package - resilient-ws: Successfully sent the message on websocket'
-        )
+        // console.log(
+        //   'npm package - resilient-ws: Successfully sent the message on websocket'
+        // )
         return true
       } else if (props.attempt < maxAttempts) {
         if (props.forceReconnect) {
