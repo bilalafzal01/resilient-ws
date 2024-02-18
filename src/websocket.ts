@@ -11,6 +11,7 @@ type ResilientWSConstructorProps = {
   onMessageCallback: (event: MessageEvent) => void
   onErrorCallback: (event: Event) => void
   pingPongSettings?: ResilientWSPingPongSettings
+  reconnectAttempts?: number
 }
 
 export type ResilientWSSendMessageProps = {
@@ -29,6 +30,7 @@ export default class ResilientWS {
   private onErrorCallback: (event: Event) => void
   private pingPongSettings: ResilientWSPingPongSettings | undefined
   private pingPongInterval: NodeJS.Timeout | undefined
+  private reconnectAttempts: number
 
   private constructor(props: ResilientWSConstructorProps) {
     this.url = props.url
@@ -38,6 +40,7 @@ export default class ResilientWS {
     this.onErrorCallback = props.onErrorCallback
     this.pingPongSettings = props.pingPongSettings
     this.pingPongInterval = undefined
+    this.reconnectAttempts = props.reconnectAttempts || 5
 
     this.initializeSocket()
   }
@@ -48,9 +51,12 @@ export default class ResilientWS {
     this.socket.addEventListener('open', () => this.onConnect())
     this.socket.addEventListener('close', () => this.onDisconnect())
     this.socket.addEventListener('message', (event) =>
-      this.handleWSMessage(event)
+      this.handleWSMessage(event),
     )
-    this.socket.addEventListener('error', (event) => this.onError(event))
+    this.socket.addEventListener('error', (event) => {
+      console.log('npm package - resilient-ws: WebSocket error', event)
+      this.onError(event)
+    })
 
     if (this.pingPongSettings?.enabled) {
       this.pingPong()
@@ -113,7 +119,7 @@ export default class ResilientWS {
       const pingMessage = this.pingPongSettings?.pingMessage || 'ping'
       this.pingPongInterval = setInterval(async () => {
         console.log(
-          'npm package - resilient-ws: Sending ping message on websocket'
+          'npm package - resilient-ws: Sending ping message on websocket',
         )
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
           await this.send({
@@ -128,19 +134,19 @@ export default class ResilientWS {
 
   // * SECTION - Public Methods
   public async send(props: ResilientWSSendMessageProps): Promise<boolean> {
-    const maxAttempts = 5
+    const maxAttempts = this.reconnectAttempts
 
     try {
       if (this.socket && this.socket.readyState === WebSocket.OPEN) {
         this.socket.send(props.message)
         console.log(
-          'npm package - resilient-ws: Successfully sent the message on websocket'
+          'npm package - resilient-ws: Successfully sent the message on websocket',
         )
         return true
       } else if (props.attempt < maxAttempts) {
         if (props.forceReconnect) {
           console.log(
-            'npm package - resilient-ws: WebSocket is not open. Reconnecting...'
+            'npm package - resilient-ws: WebSocket is not open. Reconnecting...',
           )
           this.initializeSocket()
         }
@@ -152,7 +158,7 @@ export default class ResilientWS {
         })
       } else {
         console.error(
-          `npm package - resilient-ws: WebSocket did not open even after maximum attempts : ${maxAttempts}`
+          `npm package - resilient-ws: WebSocket did not open even after maximum attempts : ${maxAttempts}`,
         )
         return false
       }
